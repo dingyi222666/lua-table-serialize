@@ -1,26 +1,26 @@
-require "import"
-import "android.app.*"
-import "android.os.*"
-import "android.widget.*"
-import "android.view.*"
+pcall(function() require "import" end) 
+--require module and use global 
+require "table_serialize" (true) 
 
---使用小端模式
+local main_dir=debug.getinfo(function()end).short_src
 
+main_dir = main_dir:match("(.+)/main.lua")
 
-require "table_serialize" (true) --导入模块 并启用全局环境
+local test_path = main_dir.."/test.ltb"
 
 do
-  local *autoClose=ByteStream("/sdcard/test.txt","w")
+   ByteStream(test_path,"w")
   :writeInt(1243)
+  :close()
 end
 
 do
-  local *stream=
-  ByteStream("/sdcard/test.txt","r") --
+  local stream=
+  ByteStream(test_path,"r") --
 
   print(stream:readInt())
 
-  print("end")
+  stream:close()
 end
 
 
@@ -49,10 +49,11 @@ do
   
   print(dump(lr))
   
-  local *writer=Writer("/sdcard/test.txt")
+  local writer=Writer(test_path)
   
   
   writer:write(lr)
+  writer:close()
 end
 
 
@@ -62,14 +63,15 @@ do
   -- end_int 4bytes
   -- end_num 8bytes (double)
   -- version 4bytes (int)
-  local *stream=
-  ByteStream("/sdcard/test.txt","r") --
+  local stream=
+  ByteStream(test_path,"r") --
 
   print(stream:read(15))
   print(stream:read(6))
   print(stream:readLong())
   print(stream:readDouble())
   print(stream:readInt())
-
+ 
+  stream:close()
   
 end
