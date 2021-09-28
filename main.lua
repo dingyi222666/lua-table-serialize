@@ -57,10 +57,12 @@ do
 end
 
 
+
+
 do
   -- signature 15bytes
   -- integrity 6bytes
-  -- end_int 4bytes
+  -- end_int 8bytes
   -- end_num 8bytes (double)
   -- version 4bytes (int)
   local stream=
@@ -74,4 +76,11 @@ do
  
   stream:close()
   
+end
+
+
+do
+  local reader=Reader(test_path,"rb")
+
+  local lr=reader:convertToIrTable()
 end

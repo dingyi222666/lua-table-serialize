@@ -2,10 +2,42 @@ local _M={}
 
 setmetatable(_M,_M)
 
+
+local string_io = {
+  build=function(self,content)
+    local new=table.clone(self)
+    new.__content=content
+    return new
+  end,
+  position=1,
+  read=function(self,size)
+    if self.position+size>#self.__content then
+      return nil
+    end
+    local result=self.__content
+    :sub(self.position,self.position+size-1)
+
+    self.position=self.position+size
+
+    return result
+
+  end,
+  close=function(self)
+    table.clear(self)
+    collectgarbage()
+  end
+  --not support write
+}
+
 _M.__call=function(self,path,mode)
   local result=table.clone(self)
   result.__mode=mode
-  result.__io=io.open(path,mode.."b")
+  
+  if mode=="strb" then
+    result.__io=string_io:build(path)
+   else
+    result.__io=io.open(path,mode.."b")
+  end
   return setmetatable(result,result)
 end
 
@@ -19,10 +51,10 @@ end
 
 
 _M.writeDouble=function(self,num)
-  
+
   local str=("<d"):pack(num)
-  
-  self.__io:write(str)  
+
+  self.__io:write(str)
   return self
 end
 
@@ -32,7 +64,7 @@ _M.readDouble=function(self,num)
   if str==nil then
     return nil
   end
-      
+
   local _=("<d"):unpack(str)
   return _
 end
@@ -43,7 +75,7 @@ _M.readFloat=function(self,num)
   if str==nil then
     return nil
   end
-      
+
   local _=("<f"):unpack(str)
   return _
 end
@@ -54,7 +86,7 @@ _M.readLong=function(self,num)
   if str==nil then
     return nil
   end
-      
+
   local _=("<l"):unpack(str)
   return _
 end
@@ -64,9 +96,9 @@ _M.read=function(self,num)
 end
 
 
-_M.writeFloat=function(self,num)  
-  local str=("<f"):pack(num)  
-  self.__io:write(str)  
+_M.writeFloat=function(self,num)
+  local str=("<f"):pack(num)
+  self.__io:write(str)
   return self
 end
 
@@ -101,8 +133,8 @@ end
 
 
 _M.writeLong=function(self,num)
-  local str=("<l"):pack(num)  
-  self.__io:write(str)  
+  local str=("<l"):pack(num)
+  self.__io:write(str)
   return self
 end
 

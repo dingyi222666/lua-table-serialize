@@ -61,11 +61,50 @@ local function buildConstant(index)
 end
 
 _M.convertToIrTable=function(self)
-  if self.__mode=="b" then
-    return nil
+  if self.__mode=="rb" then
+    local file=io.open(self.__content,"r+")
+    self.__content=file:read("*a")
+    file:close()
+    return self:__convertToIrTable()
+   elseif self.__mode=="b" then
+    return self:__convertToIrTable()
    elseif self.__mode=="t" then
     return self:_convertToIrTable()
   end
+end
+
+_M.readHeader=function(self,chunk)
+  local target_header = {
+    signature = '\27LuaTableBinary';
+    integrity = '\25\147\13\10\26\10';
+    end_int = 0x5678;
+    end_num = 370.5;
+    version = 0x1;
+  }
+
+  local reader_header = {
+    signature = self.__stream:read(15),
+    integrity = self.__stream:read(6),
+    end_int = self.__stream:readLong(),
+    end_num = self.__stream:readDouble(),
+    version = self.__stream:readInt()
+  }
+
+  assert(target_header.signature==reader_header.signature)
+  assert(target_header.integrity==reader_header.integrity)
+  assert(target_header.end_int==reader_header.end_int)
+  assert(target_header.end_num==reader_header.end_num)
+  assert(target_header.version==reader_header.version)
+  print("pass header success")
+  return reader_header
+end
+
+
+_M.__convertToIrTable=function(self)
+  self.__stream=table_serialize.ByteStream(self.__content,"strb")
+
+  self:readHeader()
+  self.__stream:close()
 end
 
 
