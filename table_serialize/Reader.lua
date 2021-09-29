@@ -15,15 +15,19 @@ _M.scanTable=function(self,tab)
   local result={tab}
 
   local visited={}
-
+  
+  local indexed={[tab]=1}
+  local len=1
   local function childScan(tab)
     visited[tab]=true
-    local function check(k,v)
-      for k,v in ipairs{k,v} do
+    local function check(...)
+      for k,v in ipairs{...} do
         if type(v)=="table" then
           if visited[v]==nil then
             visited[v]=true
             table.insert(result,v)
+            len=len+1
+            indexed[v]=len
             childScan(v)
           end
         end
@@ -38,8 +42,8 @@ _M.scanTable=function(self,tab)
 
 
   childScan(tab)
-  table.clear(visited)
-  return result
+  
+  return result,indexed
 
 end
 
@@ -189,7 +193,7 @@ _M._convertToIrTable=function(self)
 
   --first scan
 
-  local childTables=self:scanTable(tab)
+  local childTables,indexs=self:scanTable(tab)
 
   local result={
     header = {
@@ -203,13 +207,14 @@ _M._convertToIrTable=function(self)
     }
 
   }
-  local tablepool={}
-  for _,child in ipairs(childTables) do
+  
+  for index,child in ipairs(childTables) do
     local target={
       constant={},
       description={},
     }
     local constant_check = {}
+    local constant_len = 0
     for k,v in pairs(child) do
       local check_result={
         checkConstant(k),checkConstant(v)
@@ -226,49 +231,32 @@ _M._convertToIrTable=function(self)
       end
       if check_result[1]==0x1 then
         if not constant_check[k] then
-          constant_check[k]=#target.constant+1
+          constant_len=constant_len+1
+          constant_check[k]=constant_len
           table.insert(target.constant,k)
         end
       end
       if check_result[2]==0x1 then
         if not constant_check[v] then
-          constant_check[v]=#target.constant+1
+          constant_len=constant_len+1
+          constant_check[v]=constant_len
           table.insert(target.constant,v)
         end
       end
       table.insert(target.description,
       {
-        buildConstant(constant_check[k]) or buildReference(k),
-        buildConstant(constant_check[v]) or buildReference(v),
+        buildConstant(constant_check[k]) or {reference=true,type='table',pool_index=indexs[k]},
+        buildConstant(constant_check[v]) or {reference=true,type='table',pool_index=indexs[v]},
       })
       ::CONTINUE::
     end
     table.insert(result.tablepool,target)
-    tablepool[child]=#result.tablepool
+    
   end
 
   --第一次扫描完成
 
-  --第二次扫描
-
-
-  for _,pool in pairs(result.tablepool) do
-    for valuek,values in pairs(pool.description) do
-      for k,v in pairs(values) do
-        if type(v)~="table" then
-          goto CONTINUE
-        end
-        if v.reference~=true then
-          goto CONTINUE
-        end
-        if type(v.value)=="table" then
-          values[k]={reference=true,type='table',pool_index=tablepool[v.value]}
-        end
-        ::CONTINUE::
-      end
-    end
-
-  end
+  
 
   return result
 end

@@ -47,17 +47,26 @@ do
   t.t.t=t
   t[t]=t
   
+  
+  import "socket"
+  
+  local time=socket.gettime()
+  
   local reader=Reader(t,"t")
 
   local lr=reader:convertToIrTable()
   
-  print(dump(lr))
+  print(socket.gettime()-time)
   
   local writer=Writer(test_path)
   
   
   writer:write(lr)
   writer:close()
+  
+
+  
+  print(dump(lr))
 end
 
 
@@ -88,5 +97,5 @@ do
 
   local lr=reader:convertToIrTable()
   
-  print(dump(lr))
+  
 end

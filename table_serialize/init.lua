@@ -29,6 +29,7 @@ table.clone = table.clone or function(target)
   return result
 end
 
+
 return function(use_env)
   if use_env then
     _G.ByteStream,_G.Reader,_G.Writer =
