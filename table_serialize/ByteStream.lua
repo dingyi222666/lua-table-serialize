@@ -49,6 +49,10 @@ _M.writeByte=function(self,byte)
   self.__io:write(string.char(byte))
 end
 
+_M.readByte=function(self)
+  
+  return utf8.byte(self:read(1))
+end
 
 _M.writeDouble=function(self,num)
 

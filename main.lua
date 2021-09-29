@@ -26,9 +26,11 @@ do
 end
 
 
+
+
 do
 
-  
+  local String = String or function() end
 
   local t = {
     test=13,
@@ -85,4 +87,6 @@ do
   local reader=Reader(test_path,"rb")
 
   local lr=reader:convertToIrTable()
+  
+  print(dump(lr))
 end

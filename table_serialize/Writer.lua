@@ -45,7 +45,7 @@ _M.writeConstant=function(self,const)
       end
     end,
     boolean = function()
-      self.__io:writeByte(const==true and 1 or 0)
+      self.__io:writeByte(const==true and 0x1 or 0x0)
     end,
     string = function()
       self.__io:writeInt(#const) --write string size

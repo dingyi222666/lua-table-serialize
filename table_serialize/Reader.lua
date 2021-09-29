@@ -37,7 +37,6 @@ _M.scanTable=function(self,tab)
   end
 
 
-
   childScan(tab)
   table.clear(visited)
   return result
@@ -46,10 +45,12 @@ end
 
 local function checkConstant(value)
   local type=type(value)
-  if type=="userdata" or type=="thread" or type=="table" then
-    return false
+  if type=="userdata" or type=="thread" then
+    return 0x3
+   elseif type=="table" then
+    return 0x2
   end
-  return true
+  return 0x1
 end
 
 local function buildReference(t)
@@ -100,12 +101,75 @@ _M.readHeader=function(self,chunk)
 end
 
 _M.readTablePool=function(self)
-  local result = {
+  local result = {}
+
+  local table_pool_size=self.__stream:readInt()
+
+  for i=1,table_pool_size do
     
-  }
-  
-  
-    
+    local target = {
+      constant={},
+      description={}
+    }
+    table.insert(result,target)
+
+    --read constant
+
+    local constant_pool_size = self.__stream:readInt()
+
+    for i=1,constant_pool_size do
+      local constant_type = self.__stream:readByte() -- read 1 byte to get type
+
+      local value =(({
+        [0x4]=function() --number
+          local number_type = self.__stream:readByte() -- read 1 byte to get number type
+
+          if number_type == 0x2 then
+            return self.__stream:readDouble()
+           else
+            return self.__stream:readLong()
+          end
+
+        end,
+        [0x5]=function() --string
+          local string_len = self.__stream:readInt()
+          return self.__stream:read(string_len)
+        end,
+        [0x6]=function() --boolean
+          return self.__stream:readByte() == 0x1
+        end,
+        [0x7]=function() -- function
+          local string_len = self.__stream:readInt()
+          local byte_code = self.__stream:read(string_len)
+          local func=load(byte_code,"ltb_func","bt")
+          return func
+        end
+      })[constant_type]())
+
+      table.insert(target.constant,value)
+    end
+
+    --read description
+
+    local description_size = self.__stream:readInt()
+
+    for i = 1, description_size do
+      local _target = {}
+      for i=1,2 do
+        local description_type=self.__stream:readByte()
+        if description_type == 0x8 then
+          _target[i] = { constant = true , index = self.__stream:readInt() }
+         else
+          _target[i]={reference=true,type='table',pool_index=self.__stream:readInt()}
+        end
+      end
+      table.insert(target.description,_target)
+    end
+
+  end
+
+  return result
+
 end
 
 _M.__convertToIrTable=function(self)
@@ -147,13 +211,26 @@ _M._convertToIrTable=function(self)
     }
     local constant_check = {}
     for k,v in pairs(child) do
-      if checkConstant(k) then
+      local check_result={
+        checkConstant(k),checkConstant(v)
+      }
+      local break_flag=false
+      for i=1,2 do
+        if check_result[i]==0x3 then
+          break_flag=true
+          break
+        end
+      end
+      if break_flag then
+        goto CONTINUE
+      end
+      if check_result[1]==0x1 then
         if not constant_check[k] then
           constant_check[k]=#target.constant+1
           table.insert(target.constant,k)
         end
       end
-      if checkConstant(v) then
+      if check_result[2]==0x1 then
         if not constant_check[v] then
           constant_check[v]=#target.constant+1
           table.insert(target.constant,v)
@@ -164,6 +241,7 @@ _M._convertToIrTable=function(self)
         buildConstant(constant_check[k]) or buildReference(k),
         buildConstant(constant_check[v]) or buildReference(v),
       })
+      ::CONTINUE::
     end
     table.insert(result.tablepool,target)
     tablepool[child]=#result.tablepool
@@ -173,22 +251,23 @@ _M._convertToIrTable=function(self)
 
   --第二次扫描
 
+
   for _,pool in pairs(result.tablepool) do
-    for _,values in pairs(pool.description) do
+    for valuek,values in pairs(pool.description) do
       for k,v in pairs(values) do
         if type(v)~="table" then
-          continue
+          goto CONTINUE
         end
         if v.reference~=true then
-          continue
+          goto CONTINUE
         end
         if type(v.value)=="table" then
           values[k]={reference=true,type='table',pool_index=tablepool[v.value]}
-         else
-          values[k]=nil
         end
+        ::CONTINUE::
       end
     end
+
   end
 
   return result
