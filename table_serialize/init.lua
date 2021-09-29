@@ -1,9 +1,17 @@
-local ByteStream=require "table_serialize.ByteStream"
-local Reader=require "table_serialize.Reader"
+local ByteStream = require "table_serialize.ByteStream"
+local Reader = require "table_serialize.Reader"
 local Writer = require "table_serialize.Writer"
+local IrConvert = require "table_serialize.IrConvert"
+local Serialize = require "table_serialize.Serialize"
 
-local Serialize --
 
+table_serialize = {
+  ByteStream = ByteStream,
+  Reader = Reader,
+  Writer = Writer,
+  IrConvert = IrConvert,
+  Serialize = Serialize
+}
 
 table.clone = table.clone or function(target)
   local result = {}
@@ -31,13 +39,10 @@ end
 
 
 return function(use_env)
-  if use_env then
-    _G.ByteStream,_G.Reader,_G.Writer =
-    ByteStream,Reader,Writer
-   else
-
+  if use_env==true then
+    _G.ByteStream,_G.Reader,_G.Writer,
+    _G.IrConvert,_G.Serialize =
+    ByteStream,Reader,Writer,
+    IrConvert,Serialize
   end
-  table_serialize = {
-    ByteStream=ByteStream,Reader=Reader,Writer=Writer
-  }
 end 

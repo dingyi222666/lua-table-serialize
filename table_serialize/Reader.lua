@@ -88,11 +88,11 @@ _M.readHeader=function(self,chunk)
   }
 
   local reader_header = {
-    signature = self.__stream:read(15),
-    integrity = self.__stream:read(6),
-    end_int = self.__stream:readLong(),
-    end_num = self.__stream:readDouble(),
-    version = self.__stream:readInt()
+    signature = self.__io:read(15),
+    integrity = self.__io:read(6),
+    end_int = self.__io:readLong(),
+    end_num = self.__io:readDouble(),
+    version = self.__io:readInt()
   }
 
   assert(target_header.signature==reader_header.signature)
@@ -107,7 +107,7 @@ end
 _M.readTablePool=function(self)
   local result = {}
 
-  local table_pool_size=self.__stream:readInt()
+  local table_pool_size=self.__io:readInt()
 
   for i=1,table_pool_size do
     
@@ -119,32 +119,32 @@ _M.readTablePool=function(self)
 
     --read constant
 
-    local constant_pool_size = self.__stream:readInt()
+    local constant_pool_size = self.__io:readInt()
 
     for i=1,constant_pool_size do
-      local constant_type = self.__stream:readByte() -- read 1 byte to get type
+      local constant_type = self.__io:readByte() -- read 1 byte to get type
 
       local value =(({
         [0x4]=function() --number
-          local number_type = self.__stream:readByte() -- read 1 byte to get number type
+          local number_type = self.__io:readByte() -- read 1 byte to get number type
 
           if number_type == 0x2 then
-            return self.__stream:readDouble()
+            return self.__io:readDouble()
            else
-            return self.__stream:readLong()
+            return self.__io:readLong()
           end
 
         end,
         [0x5]=function() --string
-          local string_len = self.__stream:readInt()
-          return self.__stream:read(string_len)
+          local string_len = self.__io:readInt()
+          return self.__io:read(string_len)
         end,
         [0x6]=function() --boolean
-          return self.__stream:readByte() == 0x1
+          return self.__io:readByte() == 0x1
         end,
         [0x7]=function() -- function
-          local string_len = self.__stream:readInt()
-          local byte_code = self.__stream:read(string_len)
+          local string_len = self.__io:readInt()
+          local byte_code = self.__io:read(string_len)
           local func=load(byte_code,"ltb_func","bt")
           return func
         end
@@ -155,16 +155,16 @@ _M.readTablePool=function(self)
 
     --read description
 
-    local description_size = self.__stream:readInt()
+    local description_size = self.__io:readInt()
 
     for i = 1, description_size do
       local _target = {}
       for i=1,2 do
-        local description_type=self.__stream:readByte()
+        local description_type=self.__io:readByte()
         if description_type == 0x8 then
-          _target[i] = { constant = true , index = self.__stream:readInt() }
+          _target[i] = { constant = true , index = self.__io:readInt() }
          else
-          _target[i]={reference=true,type='table',pool_index=self.__stream:readInt()}
+          _target[i]={reference=true,type='table',pool_index=self.__io:readInt()}
         end
       end
       table.insert(target.description,_target)
@@ -177,13 +177,13 @@ _M.readTablePool=function(self)
 end
 
 _M.__convertToIrTable=function(self)
-  self.__stream=table_serialize.ByteStream(self.__content,"strb")
+  self.__io=table_serialize.ByteStream(self.__content,"strb")
 
   local lr={
     header=self:readHeader(),
     tablepool=self:readTablePool()
   }
-  self.__stream:close()
+  self.__io:close()
   return lr
 end
 

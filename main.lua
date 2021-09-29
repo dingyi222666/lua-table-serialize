@@ -1,8 +1,9 @@
-pcall(function() require "import" end) 
---require module and use global 
-require "table_serialize" (true) 
+pcall(function() require "import" end)
+-- require module and use global env
+-- only use true in the debug env
+require "table_serialize" (true)
 
-
+local dump = dump or print
 
 local main_dir=debug.getinfo(function()end).short_src
 
@@ -10,8 +11,10 @@ main_dir = main_dir:match("(.+)/main.lua")
 
 local test_path = main_dir.."/test.ltb"
 
+
+
 do
-   ByteStream(test_path,"w")
+  ByteStream(test_path,"w")
   :writeInt(1243)
   :close()
 end
@@ -45,27 +48,20 @@ do
   }
 
   t.t.t=t
-  t[t]=t
-  
-  
-  import "socket"
-  
-  local time=socket.gettime()
-  
+
   local reader=Reader(t,"t")
 
   local lr=reader:convertToIrTable()
-  
-  print(socket.gettime()-time)
-  
+
+
   local writer=Writer(test_path)
-  
-  
+
+
   writer:write(lr)
   writer:close()
-  
 
-  
+
+
   print(dump(lr))
 end
 
@@ -81,14 +77,14 @@ do
   local stream=
   ByteStream(test_path,"r") --
 
-   --stream:read(15)
---  (stream:read(6))
---  (stream:readLong())
---  (stream:readDouble())
---  (stream:readInt())
- 
+  --stream:read(15)
+  --  (stream:read(6))
+  --  (stream:readLong())
+  --  (stream:readDouble())
+  --  (stream:readInt())
+
   stream:close()
-  
+
 end
 
 
@@ -96,6 +92,33 @@ do
   local reader=Reader(test_path,"rb")
 
   local lr=reader:convertToIrTable()
-  
-  
+
+
+  local source_table=IrConvert.convertIrToTable(lr)
+
+  print(dump(source_table))
+end
+
+do
+  local String = String or function() end
+
+  local t = {
+    test=13,
+    aaa="6767",
+    [676]=4646,
+    t = {},
+    a = "t",
+    test=String(),
+    cc=function ()
+    end,
+    x = { a = 36 }
+  }
+
+  t.t.t=t
+
+  local binary=Serialize.serialize(
+  t,"wb",test_path)
+
+
+  print(binary)
 end

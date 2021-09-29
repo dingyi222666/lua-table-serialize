@@ -3,11 +3,14 @@ local _M={}
 
 setmetatable(_M,_M)
 
-_M.__call=function(self,path)
+_M.__call=function(self,path,mode)
   local result=table.clone(self)
-
+  local _mode="w"
+  if path==nil and mode=="stri" then
+    _mode="stri"
+  end
   result.__path=path
-  result.__io=table_serialize.ByteStream(path,"w")
+  result.__io=table_serialize.ByteStream(path,_mode)
   return setmetatable(result,result)
 end
 
@@ -87,8 +90,10 @@ _M.writeTablePool=function(self,list)
 end
 
 _M.write=function(self,lr)
+   
   self:writeHeader(lr.header)
   self:writeTablePool(lr.tablepool)
+  return self
 end
 
 _M.__close=function(self)

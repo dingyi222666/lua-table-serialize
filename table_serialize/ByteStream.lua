@@ -5,12 +5,21 @@ setmetatable(_M,_M)
 
 local string_io = {
   build=function(self,content)
+    
     local new=table.clone(self)
+    if content==nil then
+      content=""
+    end
     new.__content=content
     new.__len=#content
+    
     return new
   end,
   position=1,
+  write=function(self,content)
+    self.position=self.position+#content
+    self.__content = self.__content .. content
+  end,
   read=function(self,size)
     if self.position+size-1>self.__len then
       return nil
@@ -22,6 +31,9 @@ local string_io = {
 
     return result
 
+  end,
+  getContent=function(self)
+    return self.__content
   end,
   close=function(self)
     table.clear(self)
@@ -36,6 +48,8 @@ _M.__call=function(self,path,mode)
   
   if mode=="strb" then
     result.__io=string_io:build(path)
+   elseif mode=="stri" then
+   result.__io=string_io:build()
    else
     result.__io=io.open(path,mode.."b")
   end
