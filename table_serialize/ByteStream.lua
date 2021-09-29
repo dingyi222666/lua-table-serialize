@@ -7,11 +7,12 @@ local string_io = {
   build=function(self,content)
     local new=table.clone(self)
     new.__content=content
+    new.__len=#content
     return new
   end,
   position=1,
   read=function(self,size)
-    if self.position+size>#self.__content then
+    if self.position+size-1>self.__len then
       return nil
     end
     local result=self.__content
