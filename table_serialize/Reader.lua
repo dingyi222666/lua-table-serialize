@@ -95,16 +95,28 @@ _M.readHeader=function(self,chunk)
   assert(target_header.end_int==reader_header.end_int)
   assert(target_header.end_num==reader_header.end_num)
   assert(target_header.version==reader_header.version)
-  print("pass header success")
+  print("check header pass")
   return reader_header
 end
 
+_M.readTablePool=function(self)
+  local result = {
+    
+  }
+  
+  
+    
+end
 
 _M.__convertToIrTable=function(self)
   self.__stream=table_serialize.ByteStream(self.__content,"strb")
 
-  self:readHeader()
+  local lr={
+    header=self:readHeader(),
+    tablepool=self:readTablePool()
+  }
   self.__stream:close()
+  return lr
 end
 
 

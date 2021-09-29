@@ -2,6 +2,8 @@ pcall(function() require "import" end)
 --require module and use global 
 require "table_serialize" (true) 
 
+
+
 local main_dir=debug.getinfo(function()end).short_src
 
 main_dir = main_dir:match("(.+)/main.lua")
@@ -68,11 +70,11 @@ do
   local stream=
   ByteStream(test_path,"r") --
 
-  print(stream:read(15))
-  print(stream:read(6))
-  print(stream:readLong())
-  print(stream:readDouble())
-  print(stream:readInt())
+   --stream:read(15)
+--  (stream:read(6))
+--  (stream:readLong())
+--  (stream:readDouble())
+--  (stream:readInt())
  
   stream:close()
   
