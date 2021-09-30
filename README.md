@@ -36,9 +36,9 @@ mode:
     * `b` return binary (string)
     * `wb` (must has path) return binary and write to file
 
- param `table` input table
- param `mode` serialize mode 
- param `path` if not null,write binary to path
+ param `table` input table.
+ param `mode` serialize mode.
+ param `path` if not null,write binary to path.
 
 * `Serialize.unserialize(table,mode)`
 unserialize a table.
