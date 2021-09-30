@@ -10,7 +10,7 @@ mode:
  b return binary (string)
  wb (must has path) return binary and write to file
  
- @param table input table
+ @param table input soure table or binary
  @param mode serialize mode 
  @param path if not null,write binary to path
 ]]
@@ -54,9 +54,8 @@ mode:
  rb (must has path) read binary file and unserialize to table
  rlb (must has path) read binary file and unserialize to lr table
  
- @param table input table
+ @param table binary path or binary (string)
  @param mode unserialize mode 
- @param path if not null,read binary from path
 ]]
 _M.unSerialize=function(table,mode)
   return ({

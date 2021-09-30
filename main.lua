@@ -32,16 +32,17 @@ end
 
 
 do
+  
+  require "table_serialize" 
 
-  local String = String or function() end
-
+  
   local t = {
     test=13,
     aaa="6767",
     [676]=4646,
     t = {},
     a = "t",
-    test=String(),
+    
     cc=function ()
     end,
     x = { a = 36 }
@@ -49,20 +50,18 @@ do
 
   t.t.t=t
 
-  local reader=Reader(t,"t")
+  local reader=table_serialize.Reader(t,"t")
 
   local lr=reader:convertToIrTable()
 
 
-  local writer=Writer(test_path)
+  local writer=table_serialize.Writer(test_path)
 
 
   writer:write(lr)
   writer:close()
 
-
-
-  print(dump(lr))
+  
 end
 
 
@@ -125,6 +124,6 @@ end
 
 
 do
-  local lr=Serialize.unSerialize(test_path,"rlb")
+  local lr=Serialize.unSerialize(test_path,"rb")
   print(dump(lr))
 end
