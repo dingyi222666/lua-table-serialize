@@ -41,3 +41,6 @@ luac.out
 
 # Debug Lua Table Binary
 *.ltb
+
+# Log files
+*.log
