@@ -122,3 +122,9 @@ do
 
   print(binary)
 end
+
+
+do
+  local lr=Serialize.unSerialize(test_path,"rlb")
+  print(dump(lr))
+end

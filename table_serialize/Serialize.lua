@@ -27,9 +27,9 @@ _M.serialize=function(table,mode,path)
       .__io
       .__io
       :getContent()
-      
+
       return binary
-     
+
     end,
     wb=function()
       local lr=table_serialize.Reader(table,"t"):convertToIrTable()
@@ -42,7 +42,7 @@ _M.serialize=function(table,mode,path)
       return binary
     end,
   })[mode]()
-  
+
 end
 
 
@@ -58,12 +58,27 @@ mode:
  @param mode unserialize mode 
  @param path if not null,read binary from path
 ]]
-_M.unSerialize=function(table,mode,path)
+_M.unSerialize=function(table,mode)
   return ({
-    --@TODO do it
+    lb=function()
+      local lr=table_serialize.Reader(table,"b"):convertToIrTable()
+      return lr
+    end,
+    b=function()
+      local lr=table_serialize.Reader(table,"b"):convertToIrTable()
+      return table_serialize.IrConvert.convertIrToTable(lr)
+    end,  
+    rlb=function()
+      local lr=table_serialize.Reader(table,"rb"):convertToIrTable()
+      return lr
+    end,
+    rb=function()
+      local lr=table_serialize.Reader(table,"rb"):convertToIrTable()
+      return table_serialize.IrConvert.convertIrToTable(lr)  
+    end,
   })[mode]()
-  
-  
+
+
 end
 
 return _M
