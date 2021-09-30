@@ -24,30 +24,29 @@ This package has the following modules:
   
 They are inside table `table_serialize`,also use this code to import global env.
 ```lua
-   require 'table_serialize' (true)
+require 'table_serialize' (true)
 ```
 
 Quick use `table_serialize.Serialize` to serialize/unserialize table,so I only list this module api.
  
-
 * 'Serialize.serialize(table,mode,path)'
 serialize a table.
 mode:
-     * l return lr table
-     * b return binary (string)
-     * wb (must has path) return binary and write to file
+    * `l` return lr table
+    * `b` return binary (string)
+    * `wb` (must has path) return binary and write to file
 
  param `table` input table
  param `mode` serialize mode 
  param `path` if not null,write binary to path
 
 * `Serialize.unserialize(table,mode)'
- unserialize a table.
- mode:
-     * lb unserialize binary to lr table.
-     * b unserialize binary to table.
-     * rb (must has path) read binary file and unserialize to table.
-     * rlb (must has path) read binary file and unserialize to lr table.
+unserialize a table.
+mode:
+    * `lb` unserialize binary to lr table.
+    * `b` unserialize binary to table.
+    * `rb` (must has path) read binary file and unserialize to table.
+    * `rlb` (must has path) read binary file and unserialize to lr table.
  
  param `table` binary path or binary (string).
  param `mode` unserialize mode.
@@ -60,16 +59,18 @@ Usage
 ```lua
 require "table_serialize" 
 
-local binary=Serialize.serialize(
-  t,"wb",test_path)
+local binary=Serialize.serialize(t,"wb",test_path)
 
 print(binary)
 ```
 
+
 **Unserialize table**
+
+
 ```lua
 local source_table=Serialize.unSerialize("test path","rb")
 print(source_table)
 ```
-more example in  'main.lua'.
+more example see `main.lua`.
 
