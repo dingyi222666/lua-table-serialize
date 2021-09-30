@@ -63,9 +63,12 @@ Usage
 ```lua
 require "table_serialize" 
 
-local binary=table_serialize.Serialize.serialize(t,"wb",test_path)
+local t = {a=12}
+
+local binary = table_serialize.Serialize.serialize(t,"wb",test_path)
 
 print(binary)
+
 ```
 
 
@@ -75,8 +78,9 @@ print(binary)
 ```lua
 require "table_serialize" 
 
-local source_table=table_serialize.Serialize.unSerialize("test path","rb")
+local source_table = table_serialize.Serialize.unSerialize("test path","rb")
 
 print(source_table)
+
 ```
 more example see [`main.lua`](https://github.com/dingyi222666/lua-table-serialize/blob/main/main.lua).
