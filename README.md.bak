@@ -29,7 +29,7 @@ require 'table_serialize' (true)
 
 Quick use `table_serialize.Serialize` to serialize/unserialize table,so I only list this module api.
  
-* `Serialize.serialize(table,mode,path)`
+* 'Serialize.serialize(table,mode,path)'
 serialize a table.
 mode:
     * `l` return lr table
@@ -40,7 +40,7 @@ mode:
  param `mode` serialize mode 
  param `path` if not null,write binary to path
 
-* `Serialize.unserialize(table,mode)`
+* `Serialize.unserialize(table,mode)'
 unserialize a table.
 mode:
     * `lb` unserialize binary to lr table.
@@ -73,3 +73,4 @@ local source_table=Serialize.unSerialize("test path","rb")
 print(source_table)
 ```
 more example see `main.lua`.
+
