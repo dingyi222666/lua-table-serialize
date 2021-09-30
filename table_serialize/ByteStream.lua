@@ -36,7 +36,7 @@ local string_io = {
     return self.__content
   end,
   close=function(self)
-    table.clear(self)
+    pcall(table.clear,self)
     collectgarbage()
   end
   --not support write
@@ -64,9 +64,8 @@ _M.writeByte=function(self,byte)
   self.__io:write(string.char(byte))
 end
 
-_M.readByte=function(self)
-  
-  return utf8.byte(self:read(1))
+_M.readByte=function(self)  
+  return string.byte(self:read(1))
 end
 
 _M.writeDouble=function(self,num)

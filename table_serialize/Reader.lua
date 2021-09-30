@@ -100,7 +100,7 @@ _M.readHeader=function(self,chunk)
   assert(target_header.end_int==reader_header.end_int)
   assert(target_header.end_num==reader_header.end_num)
   assert(target_header.version==reader_header.version)
-  print("check header pass")
+  
   return reader_header
 end
 

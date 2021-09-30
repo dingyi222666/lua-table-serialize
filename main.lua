@@ -7,10 +7,18 @@ local dump = dump or print
 
 local main_dir=debug.getinfo(function()end).short_src
 
-main_dir = main_dir:match("(.+)/main.lua")
+if main_dir~=nil then
 
-local test_path = main_dir.."/test.ltb"
+  main_dir = main_dir:match("(.+)/main.lua")
 
+end
+
+local test_path
+if main_dir~=nil then
+  test_path=main_dir.."/test.ltb"
+ else
+  test_path="test.ltb"
+end
 
 
 do
@@ -32,17 +40,17 @@ end
 
 
 do
-  
-  require "table_serialize" 
 
-  
+  require "table_serialize"
+
+
   local t = {
     test=13,
     aaa="6767",
     [676]=4646,
     t = {},
     a = "t",
-    
+
     cc=function ()
     end,
     x = { a = 36 }
@@ -61,7 +69,7 @@ do
   writer:write(lr)
   writer:close()
 
-  
+
 end
 
 
