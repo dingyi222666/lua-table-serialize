@@ -36,11 +36,11 @@ mode:
     * `b` return binary (string)
     * `wb` (must has path) return binary and write to file
 
-param `table` input table.
+    param `table` input table.
 
-param `mode` serialize mode.
+    param `mode` serialize mode.
 
-param `path` if not null,write binary to path.
+    param `path` if not null,write binary to path.
 
 
 * `Serialize.unserialize(table,mode)`
@@ -51,8 +51,9 @@ mode:
     * `rb` (must has path) read binary file and unserialize to table.
     * `rlb` (must has path) read binary file and unserialize to lr table.
  
- param `table` binary path or binary (string).
- param `mode` unserialize mode.
+    param `table` binary path or binary (string).
+
+    param `mode` unserialize mode.
 
 
 Usage
