@@ -40,6 +40,7 @@ mode:
  param `mode` serialize mode.
  param `path` if not null,write binary to path.
 
+
 * `Serialize.unserialize(table,mode)`
 unserialize a table.
 mode:
