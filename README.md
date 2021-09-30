@@ -72,4 +72,4 @@ print(binary)
 local source_table=Serialize.unSerialize("test path","rb")
 print(source_table)
 ```
-more example see `main.lua`.
+more example see [`main.lua`](https://github.com/dingyi222666/lua-table-serialize/blob/main/main.lua).
