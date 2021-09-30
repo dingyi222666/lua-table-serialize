@@ -36,9 +36,11 @@ mode:
     * `b` return binary (string)
     * `wb` (must has path) return binary and write to file
 
- param `table` input table.
- param `mode` serialize mode.
- param `path` if not null,write binary to path.
+param `table` input table.
+
+param `mode` serialize mode.
+
+param `path` if not null,write binary to path.
 
 
 * `Serialize.unserialize(table,mode)`
@@ -60,7 +62,7 @@ Usage
 ```lua
 require "table_serialize" 
 
-local binary=Serialize.serialize(t,"wb",test_path)
+local binary=table_serialize.Serialize.serialize(t,"wb",test_path)
 
 print(binary)
 ```
@@ -70,7 +72,8 @@ print(binary)
 
 
 ```lua
-local source_table=Serialize.unSerialize("test path","rb")
+require "table_serialize" 
+local source_table=table_serialize.Serialize.unSerialize("test path","rb")
 print(source_table)
 ```
 more example see [`main.lua`](https://github.com/dingyi222666/lua-table-serialize/blob/main/main.lua).
