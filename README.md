@@ -1,14 +1,13 @@
-lua-table-serialize
-==========
+# lua-table-serialize
 
 This is a lua table serialize libraray,convert table to binary.
 
-Requirements
-------------
+## Requirements
+
         lua >= 5.3
 
-API
----
+## API
+
 
 This package has the following modules:
   * `lrConvert`
@@ -56,8 +55,8 @@ mode:
     param `mode` unserialize mode.
 
 
-Usage
---------
+## Usage
+
 
 **Code example for serialize a table**
 ```lua
